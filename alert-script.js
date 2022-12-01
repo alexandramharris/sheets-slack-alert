@@ -1,4 +1,4 @@
-function triggerEmailOnEdit(e) {
+function triggerAlertOnEdit(e) {
   CheckNotices()
 }
 
