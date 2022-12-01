@@ -17,7 +17,7 @@ function CheckNotices()
     // Send slack alert
     sendSlackAlert()
   } else {
-    console.log("I did not send the email.");
+    console.log("The alert was not sent.");
   }
 
   updateCache(companyNames);
