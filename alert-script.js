@@ -23,8 +23,6 @@ function CheckNotices()
   updateCache(companyNames);
 }
 
-
-
 function updateCache(new_value) {
   ScriptProperties.setProperty("companyName", new_value)
 }
