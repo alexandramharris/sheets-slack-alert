@@ -1,4 +1,4 @@
-function triggerAlertOnEdit(e) {
+function triggerAlertOnChange(e) {
   CheckNotices()
 }
 
