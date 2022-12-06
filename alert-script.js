@@ -15,7 +15,7 @@ function CheckNotices()
 
   if (companyNames != prev_companyNames) {
     // Send slack alert
-    sendSlackAlert()
+    sendSlackAlert(companyNames)
   } else {
     console.log("The alert was not sent.");
   }
@@ -31,10 +31,10 @@ function getPreviousCompanyName() {
   return ScriptProperties.getProperty("companyName")
 }
 
- function sendSlackAlert() {
+ function sendSlackAlert(companyNames) {
     var url = "ADD WEBHOOK HERE";
     var payload = {
-      text: ":rotating_light: *New layoff notice* :rotating_light: \n Check out the full notice: https://dol.ny.gov/warn-notices \n <!here>"
+      text: (':rotating_light: *New layoff notice* :rotating_light: \n From ' + companyNames + '\n Check out the full notice: https://dol.ny.gov/warn-notices \n <!here>')
           }
 
     var headers = {
