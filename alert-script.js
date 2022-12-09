@@ -1,40 +1,44 @@
 function triggerAlertOnChange(e) {
-  CheckNotices()
+  CheckNotices();
 }
 
-function CheckNotices()
-{
+function CheckNotices() {
   // Fetch notices
   var companyNamesRange = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Notices").getRange("A2");
   var companyNames = companyNamesRange.getValue();
-  console.log("current companyNames: ", companyNames)
 
   // Check company names
   var prev_companyNames = getPreviousCompanyName();
-  console.log("prev_companyNames: ", prev_companyNames)
 
-  if (companyNames != prev_companyNames) {
-    // Send slack alert
-    sendSlackAlert(companyNames)
-  } else {
-    console.log("The alert was not sent.");
+  // Check if companyNames contains "Capital Region" or "Mid-Hudson Valley"
+  if (companyNames.includes("Capital Region") || companyNames.includes("Mid-Hudson Valley")) {
+      var text = ":rotating_light: *New local layoff notice* :rotating_light: \n From " + companyNames + "\n Check out the full notice: https://dol.ny.gov/warn-notices \n <!here>";
+    } else {
+      var text = "*New layoff notice in New York* \n From " + companyNames + "\n Check out the full notice: https://dol.ny.gov/warn-notices";
+    }
+
+    if (companyNames != prev_companyNames) {
+      // Send slack alert
+      sendSlackAlert(text);
+    } else {
+      // Do nothing
+    }
+
+    updateCache(companyNames);
   }
 
-  updateCache(companyNames);
-}
-
 function updateCache(new_value) {
-  ScriptProperties.setProperty("companyName", new_value)
+  ScriptProperties.setProperty("companyName", new_value);
 }
 
 function getPreviousCompanyName() {
-  return ScriptProperties.getProperty("companyName")
+  return ScriptProperties.getProperty("companyName");
 }
 
- function sendSlackAlert(companyNames) {
-    var url = "ADD WEBHOOK HERE";
+function sendSlackAlert(text) {
+    var url = "ADD HOOK FOR CHANNEL HERE";
     var payload = {
-      text: (':rotating_light: *New layoff notice* :rotating_light: \n From ' + companyNames + '\n Check out the full notice: https://dol.ny.gov/warn-notices \n <!here>')
+      text: text
           }
 
     var headers = {
@@ -46,4 +50,3 @@ function getPreviousCompanyName() {
           payload: JSON.stringify(payload)
           }
     UrlFetchApp.fetch(url, options);
- }
