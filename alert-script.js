@@ -12,7 +12,7 @@ function CheckNotices() {
 
   // Check if companyNames contains "Capital Region" or "Mid-Hudson Valley"
   if (companyNames.includes("Capital Region") || companyNames.includes("Mid-Hudson Valley")) {
-      var text = ":rotating_light: *New local layoff notice* :rotating_light: \nFrom " + companyNames + "\n\nCheck out the full notice: https://dol.ny.gov/warn-notices \n <!here>";
+      var text = ":rotating_light: *New local layoff notice* :rotating_light: \nFrom " + companyNames + "\n\nCheck out the full notice: https://dol.ny.gov/warn-notices \n<!here>";
     } else {
       var text = ":bell: *New layoff notice in New York* :bell: \nFrom " + companyNames + "\n\nCheck out the full notice: https://dol.ny.gov/warn-notices";
     }
