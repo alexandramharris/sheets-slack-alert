@@ -1,45 +1,53 @@
-function triggerAlertOnChange(e) {
-  CheckNotices();
-}
-
 function CheckNotices() {
-  // Fetch notices
-  var companyNamesRange = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Notices").getRange("A2");
-  var companyNames = companyNamesRange.getValue();
+  try {
+    var companyNamesRange = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Notices").getRange("A2:A");
+    var companyNames = companyNamesRange.getValues();
 
-  // Check company names
-  var prev_companyNames = getPreviousCompanyName();
+    console.log("companyNames:", companyNames);
 
-  // Check if companyNames contains "Capital Region" or "Mid-Hudson Region"
-  if (companyNames.includes("Capital Region") || companyNames.includes("Mid-Hudson Region")) {
-      var text = ":rotating_light: *New local layoff notice* :rotating_light: \nFrom " + companyNames + "\n\nCheck out the full notice: https://dol.ny.gov/warn-notices \n<!here>";
-    } else {
-      var text = ":bell: *New layoff notice in New York* :bell: \nFrom " + companyNames + "\n\nCheck out the full notice: https://dol.ny.gov/warn-notices";
+    var processedCompanyNames = getProcessedCompanyNames();
+
+    console.log("processedCompanyNames:", processedCompanyNames);
+
+    for (var i = 0; i < companyNames.length; i++) {
+      var companyName = companyNames[i][0];
+      if (companyName && !processedCompanyNames.includes(companyName)) {
+        processedCompanyNames.push(companyName);
+        if (companyName.includes("Capital Region") || companyName.includes("Mid-Hudson Region")) {
+          var text = ":rotating_light: *New local layoff notice* :rotating_light: \nFrom " + companyName + "\n\nCheck out the full notice: https://dol.ny.gov/warn-notices \n<!here>";
+        } else {
+          var text = ":bell: *New layoff notice in New York* :bell: \nFrom " + companyName + "\n\nCheck out the full notice: https://dol.ny.gov/warn-notices";
+        }
+        // Send slack alert
+        sendSlackAlert(text);
+      }
     }
 
-    if (companyNames != prev_companyNames) {
-      // Send slack alert
-      sendSlackAlert(text);
-    } else {
-      // Do nothing
-    }
-
-    updateCache(companyNames);
+    updateProcessedCompanyNames(processedCompanyNames);
+  } catch (error) {
+    console.error(error);
   }
-
-function updateCache(new_value) {
-  ScriptProperties.setProperty("companyName", new_value);
 }
 
-function getPreviousCompanyName() {
-  return ScriptProperties.getProperty("companyName");
+function updateProcessedCompanyNames(new_value) {
+  ScriptProperties.setProperty("processedCompanyNames", JSON.stringify(new_value));
+}
+
+function getProcessedCompanyNames() {
+  var processedCompanyNames = ScriptProperties.getProperty("processedCompanyNames");
+  if (processedCompanyNames) {
+    return JSON.parse(processedCompanyNames);
+  } else {
+    return [];
+  }
 }
 
 function sendSlackAlert(text) {
-  var url = "ADD CHANNEL HOOK HERE";
+  var url = "URL GOES HERE";
   var payload = {
     text: text
   }
+
 
   var headers = {
     'Content-type': 'application/json'
